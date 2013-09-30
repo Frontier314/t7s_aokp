@@ -1,0 +1,162 @@
+#!/system/bin/sh
+#------------------------------------------------------------------------------
+#
+#    Copyright (c) Urbetter Corporation.  All rights reserved.
+# 
+#------------------------------------------------------------------------------
+#==============================================================================
+#	make by urbetter albert
+#==============================================================================
+TAGS="series_tool"
+
+BB="busybox "
+MOUNT="busybox mount"
+UMOUNT="busybox umount"
+MKFAT="busybox mkfs.vfat"
+MKDIR="busybox mkdir"
+RM="$BB rm "
+CP="$BB cp "
+ECHO="$BB echo "
+CHMOD="$BB chmod "
+
+PARAM_IMG="/data/param_fat"
+MOUNT_DEV="/dev/block/mmcblk0"
+MOUNT_LOOP="/dev/block/loop5"
+MOUNT_TARGET_PATH="/data/data/param"
+
+MACADDR_FILE="$MOUNT_TARGET_PATH/.mac.info"
+MACH_SERIES_FILE="$MOUNT_TARGET_PATH/.series.info"
+GSM_IMEI_FILE="$MOUNT_TARGET_PATH/.imei.info"
+
+
+#SYSLOG="busybox echo "
+SYSLOG="log -p i -t $TAGS "
+ETC_PATH="/system/etc/"
+
+strcmp() {
+    case $1 in
+        $2)
+        return 0;
+        ;;
+        *)
+        return 1;
+        ;;
+    esac
+}
+
+do_mount() {
+	$SYSLOG "do mount !"
+
+	$BB dd if=$MOUNT_DEV  of=$PARAM_IMG  bs=1M  skip=32  count=2
+	losetup $MOUNT_LOOP $PARAM_IMG
+
+	$MKDIR $MOUNT_TARGET_PATH -p
+	$MOUNT -t vfat $MOUNT_LOOP $MOUNT_TARGET_PATH
+	if [ $? = 0 ]
+	then
+		$SYSLOG "recover param "
+	else
+		$SYSLOG "null param! create new param "
+		$UMOUNT $MOUNT_TARGET_PATH
+		$MKFAT $MOUNT_LOOP -n param
+		$MOUNT -t vfat $MOUNT_LOOP $MOUNT_TARGET_PATH
+	fi
+}
+
+do_umount() {
+	$SYSLOG "do umount $1!"
+
+	$UMOUNT $MOUNT_TARGET_PATH
+
+	$BB sync
+	
+	case $1 in
+		store )
+			$BB dd if=$PARAM_IMG  of=$MOUNT_DEV  bs=1M  seek=32  count=2	
+			;;
+		* )
+			;;
+	esac	
+
+	$RM $PARAM_IMG -f
+}
+
+
+init() {
+	$SYSLOG "do init !"	
+	do_mount
+
+	if [ -e $GSM_IMEI_FILE ]
+	then
+		$SYSLOG "found imei num.:" `$BB cat $GSM_IMEI_FILE`
+		$CP $GSM_IMEI_FILE $ETC_PATH -f
+		$CHMOD 644 $GSM_IMEI_FILE
+	fi
+
+	if [ -e $MACADDR_FILE ]
+	then
+		$SYSLOG "found mac addr:" `$BB cat $MACADDR_FILE`
+		$CP $MACADDR_FILE $ETC_PATH -f
+		$CHMOD 644 $MACADDR_FILE
+	fi
+
+
+	if [ -e $MACH_SERIES_FILE ]
+	then
+		$SYSLOG "found serial num.:" `$BB cat $MACH_SERIES_FILE`
+		$CP $MACH_SERIES_FILE $ETC_PATH -f
+		$CHMOD 644 $MACH_SERIES_FILE
+	fi
+	
+
+	do_umount
+}
+
+set_mach_series() {
+	$SYSLOG "enter set_mach_series()"
+	$RM $MACH_SERIES_FILE -f
+	do_mount
+	$ECHO $1 > $MACH_SERIES_FILE
+	$CP $MACH_SERIES_FILE $ETC_PATH -f
+	$CHMOD 644 $MACH_SERIES_FILE
+	do_umount store
+}
+
+set_bt_mac() {
+	$SYSLOG "enter set_bt_mac()"
+	$RM $MACADDR_FILE -f
+	do_mount
+	$ECHO $1 > $MACADDR_FILE 	
+	$CP $MACADDR_FILE $ETC_PATH -f
+	$CHMOD 644 $MACADDR_FILE
+	do_umount store
+}
+
+do_clear() {
+	$SYSLOG "enter set_bt_mac()"
+	do_mount
+	$RM $MOUNT_TARGET_PATH/* -rf
+	do_umount store
+}
+
+
+$SYSLOG "enter main $1 !"	
+case $1 in 
+	machid )
+		set_mach_series $2
+		;;
+
+	btid )
+		set_bt_mac $2
+		;;
+
+	clr )
+		do_clear
+		;;
+
+	* ) 
+		init
+		;;
+esac
+
+

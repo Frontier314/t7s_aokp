@@ -1,0 +1,31 @@
+on post-fs
+
+on post-fs-data
+
+# Load common part modules
+
+on boot
+
+service switch3g /system/etc/ppp/switch3g.sh
+     class core
+     user root
+     group root
+     
+service pppd_cdma /system/etc/ppp/connect3g
+    user root
+    #group radio cache inet misc
+    group system root
+    disabled
+    oneshot
+ 
+service cpydialnum /system/etc/ppp/cpydialnum
+     class core
+     user root
+     group root
+
+service ril-daemon /system/bin/rild -l libreference-ril.so -- -d /dev/ttyUSB2
+     class main
+     socket rild stream 660 root radio
+     socket rild-debug stream 660 radio system
+     user root
+     group radio cache inet misc audio

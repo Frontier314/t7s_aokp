@@ -1,0 +1,9 @@
+#
+# system.prop for smdk4x12
+#
+
+#rild.libpath=/system/lib/libmbm-ril.so
+#rild.libargs=-d /dev/ttyACM0
+ro.sf.hwrotation=
+ro.sf.lcd_density=160
+#debug.gralloc.vsync=0

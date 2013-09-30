@@ -1,0 +1,57 @@
+/dev/mali                 0666   system     system
+/dev/ion                  0666   system     system
+/dev/video0               0660   system	    media
+/dev/video1               0660   system     camera
+/dev/video2               0660   system     media
+/dev/video3               0660   system     camera
+/dev/video4               0660   system     media
+/dev/video5               0660   system     camera
+/dev/video6               0660   system     media
+/dev/video7               0660   system     camera
+/dev/video8               0660   media      graphics
+/dev/video9               0660   media      graphics
+/dev/video10              0660   system     system
+/dev/video11              0660   system     system
+/dev/video12              0660   system     system
+/dev/video13              0660   media      graphics
+/dev/video14              0660   media      graphics
+/dev/video15              0660   system     system
+/dev/i2c-2                0660   system     system
+/dev/i2c-*                0660   system     system
+# ULP Audio
+/dev/srp                  0660   system     audio
+/dev/srp_ctrl             0660   system     audio
+/dev/fimg2d               0666   system     graphics
+
+# add by albert
+/dev/ttySAC*                 0666   system       system
+/dev/ut_bt_dev            0666   root       system
+/dev/ttyUSB*			0666   radio       radio
+/dev/mma7660              0666   system     system
+#add by eking for light sensor 
+/dev/bh1721               0666  system     system
+
+/dev/watchdog		 0666   system         system
+
+/dev/stpwmt               0660   system         system
+/dev/stpgps               0664   system         system
+/dev/fm                   0666   system         system
+/dev/wmtWifi              0666   system         system
+/dev/stpbt                0664   system         system
+/dev/gps   		   0666   system       system
+
+# add for debug
+/dev/graphics/fb*		0666  system system
+
+
+#nfc
+/dev/pn544			0666	 nfc				nfc
+/dev/bh1721                  0666  system     system
+
+#BT_HID
+/dev/uhid           0666  system     system
+
+#cpufreq
+/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq              0666    system    system
+/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq              0666    system    system
+/proc/tmu/user_powersave                                           0666    system    system

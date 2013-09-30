@@ -1,0 +1,102 @@
+import init.smdk4412.usb.rc
+
+on init
+    # See storage config details at http://source.android.com/tech/storage/
+    mkdir /mnt/shell/emulated 0700 shell shell
+    mkdir /storage/emulated 0555 root root
+    mkdir /storage/sdcard 0775 system system
+    mkdir /storage/extsd 0775 system system
+    mkdir /storage/udisk 0775 system system
+
+#    export EXTERNAL_STORAGE /storage/emulated/legacy
+#    export SECONDARY_STORAGE /storage/sd_internal:/mnt/usb
+#    export EMULATED_STORAGE_SOURCE /mnt/shell/emulated
+#    export EMULATED_STORAGE_TARGET /storage/emulated
+
+    # Support legacy paths
+#    symlink /storage/emulated/legacy /sdcard
+#    symlink /storage/emulated/legacy /mnt/sdcard
+#    symlink /storage/emulated/legacy /storage/sdcard0
+#    symlink /mnt/shell/emulated/0 /storage/emulated/legacy
+#    symlink /storage/sd_internal /mnt/ext_sd
+
+    export EXTERNAL_STORAGE /storage/sdcard
+    export SECONDARY_STORAGE /storage/extsd:/mnt/usb
+    symlink /storage/sdcard /sdcard
+    symlink /storage/extsd /extsd
+    symlink /storage/udisk /udisk
+    symlink /storage/sdcard /mnt/sdcard
+    symlink /storage/extsd /mnt/extsd
+    symlink /storage/udisk /mnt/udisk
+    symlink /storage/sdcard /storage/sdcard0
+
+on post-fs-data
+    mkdir /data/media 0770 media_rw media_rw
+    chmod 0755 /etc/default_workspace.xml
+
+    setprop vold.post_fs_data_done 1
+    mkdir /data/misc/dhcp 0770 dhcp dhcp
+    chown dhcp dhcp /data/misc/dhcp
+on boot
+    # override init.rc to keep plenty of large order chunks around
+    # to improve allocation times
+    write /proc/sys/vm/min_free_kbytes 32768
+    write /proc/sys/vm/min_free_order_shift 1
+    mount debugfs /sys/kernel/debug /sys/kernel/debug
+
+    setprop ro.radio.noril yes
+    # Set up kernel tracing, but disable it by default
+    chmod 0222 /sys/kernel/debug/tracing/trace_marker
+    write /sys/kernel/debug/tracing/tracing_on 0
+
+    chmod 0777 /system/etc/utinsmod.sh
+
+
+on fs
+    mount_all /fstab.smdk4412
+#    mount ext3 /dev/block/mmcblk0p3 /data
+#    setprop ro.crypto.fuse_sdcard true
+
+# Permissions for backlight
+    chmod 0666 /sys/class/backlight/pwm-backlight.0/brightness
+    chown system system /sys/class/backlight/pwm-backlight.0/brightness
+    # we will remap this as /mnt/sdcard with the sdcard fuse tool
+    mkdir /data/media 0770 media_rw media_rw
+  
+
+# create filesystems if necessary
+service setup_fs /system/bin/setup_fs \
+	/dev/block/mmcblk0p3 \
+        /dev/block/mmcblk0p4
+    class core
+    user root
+    group root
+    oneshot
+
+# eth0
+service dhcpcd_eth0 /system/bin/dhcpcd -ABDKL
+    class main
+    disabled
+    oneshot
+
+# IP Renew
+# eth0 
+service iprenew_eth0 /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+
+service utinsmod /system/bin/sh /system/etc/utinsmod.sh  
+    class core   
+    user root    
+    oneshot  
+   
+#check property for first boot
+#service check_property /system/busybox/bin/sh /system/etc/check_property.sh
+service check_property /system/bin/sh /system/etc/check_property.sh
+   class core                 
+   user root                                                                    
+   oneshot  
+
+

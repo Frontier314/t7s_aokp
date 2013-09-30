@@ -1,0 +1,75 @@
+
+on post-fs
+
+on post-fs-data
+# wpa_supplicant control socket for android wifi.c
+    
+    mkdir /data/misc/wifi 0770 wifi wifi
+    mkdir /data/misc/wifi/sockets 0770 wifi wifi
+    chmod 0770 /data/misc/wifi
+    chmod 0660 /data/misc/wifi/wpa_supplicant.conf
+    chmod 0660 /data/misc/wifi/hostapd.conf
+    chown wifi wifi /data/misc/wifi
+    chown wifi wifi /data/misc/wifi/wpa_supplicant.conf
+    chown wifi wifi /data/misc/wifi/hostapd.conf
+
+# wpa_supplicant socket
+    
+    mkdir /data/system 0771 system system
+    mkdir /data/system/wpa_supplicant 0771 wifi wifi
+    chmod 0771 /data/system/wpa_supplicant
+    chown wifi wifi /data/system/wpa_supplicant
+    mkdir /data/misc/p2p_supplicant 0771 wifi wifi
+    chmod 0771 /data/misc/hostapd_wps
+    chown wifi wifi /data/misc/hostapd.conf
+
+# wpa_supplicant control socket for android wifi.c
+    mkdir /data/misc/wifi 0770 wifi wifi
+    mkdir /data/misc/dhcp 0771 dhcp dhcp
+    mkdir /data/wifi 0771 wifi wifi
+    chown dhcp dhcp /data/misc/dhcp
+
+
+    setprop wifi.interface "wlan0"
+
+on boot
+
+
+
+
+##RTL8818 start 
+service wpa_supplicant /system/bin/wpa_supplicant -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf 
+    socket wpa_wlan0 dgram 660 wifi wifi 
+    group wifi inet 
+    disabled 
+    oneshot 
+
+
+#service hostapd /system/bin/hostapd_wps /data/misc/wifi/hostapd.conf
+service hostapd /system/bin/hostapd_wps /data/misc/wifi/hostapd.conf
+    group wifi inet
+    disabled
+    oneshot
+
+service dhcpcd_wlan0 /system/bin/dhcpcd -ABKL
+    group system dhcp
+    disabled
+    oneshot
+
+#service dhcpcd_p2p /system/bin/dhcpcd -aABKL
+#    class main
+#    disabled
+#    oneshot
+
+service iprenew_wlan0 /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+#service iprenew_p2p /system/bin/dhcpcd -n    
+#    class main    
+#    disabled    
+#    oneshot
+
+##RTL8818 end
+    

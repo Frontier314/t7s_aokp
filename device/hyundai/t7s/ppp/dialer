@@ -1,0 +1,14 @@
+#!/system/bin/sh
+/system/bin/pppd	\
+/dev/ttyUSB0		\
+115200			\
+debug			\
+noauth			\
+user null			\
+password null		\
+defaultroute		\
+noipdefault		\
+usepeerdns		\
+#ipcp-accept-local       \
+#ipcp-accept-remote      \
+#connect '/system/bin/chat -v -f /system/etc/ppp/chat.conf'

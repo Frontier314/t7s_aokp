@@ -1,0 +1,24 @@
+on post-fs
+
+on post-fs-data
+
+# BlueZ driver internal config file generated path
+    mkdir /data/bluetooth 0771 bluetooth bluetooth
+
+# Encrypt phone function
+    setprop vold.post_fs_data_done 1
+
+on boot
+
+
+service dhcpcd_bnep0 /system/bin/dhcpcd -ABKL   
+    class main    
+    disabled    
+    oneshot
+
+service iprenew_bnep0 /system/bin/dhcpcd -n
+    class main
+    disabled
+    oneshot
+
+ #end

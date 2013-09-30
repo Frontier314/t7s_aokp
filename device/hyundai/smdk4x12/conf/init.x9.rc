@@ -1,0 +1,40 @@
+on post-fs
+
+on post-fs-data
+
+# Load common part modules
+    
+    chmod 0777      /system/lib/libreference-ril.so 
+    chmod 0777      /system/etc/ppp/peers/init.gprs-pppd   
+    chmod 0777      /system/etc/ppp/pap-secrets 
+    chmod 0777      /system/etc/ppp/chap-secrets 
+
+on boot
+
+
+service pppd_wcdma    /system/etc/ppp/peers/init.gprs-pppd   
+     user root 
+     #group radio cache inet misc 
+     group system root 
+     disabled 
+     oneshot 
+
+service pppd_gprs    /system/etc/ppp/peers/init.gprs-pppd   
+    user root 
+    #group radio cache inet misc 
+    group system root 
+    disabled 
+    oneshot 
+
+
+service ril-daemon /system/bin/rild -l libreference-ril.so -- -d /dev/ttyUSB2
+#service ril-daemon /system/bin/rild
+    class main     
+    socket rild stream 660 root radio     
+    socket rild-debug stream 660 radio system     
+    user root     
+    group radio cache inet misc audio sdcard_rw
+    disabled
+    
+## end
+    

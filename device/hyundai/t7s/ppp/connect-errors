@@ -1,0 +1,105 @@
+timeout set to 40 seconds
+abort on (DELAYED)
+abort on (BUSY)
+abort on (ERROR)
+abort on (NO DIALTONE)
+abort on (NO CARRIER)
+timeout set to 40 seconds
+send (^JAT^M)
+expect (OK)
+AT^M^M
+OK
+ -- got it
+
+send (AT&F0^M)
+expect (OK)
+^M
+AT&F0^M^M
+OK
+ -- got it
+
+send (ATE0V1&C1&D2^M)
+expect (OK)
+^M
+ATE0V1&C1&D2^M^M
+OK
+ -- got it
+
+send (ATE0^M)
+expect (OK)
+^M
+^M
+OK
+ -- got it
+
+send (AT+CGDCONT=1,"IP","CMNET"^M)
+expect (OK)
+^M
+^M
+OK
+ -- got it
+
+send (ATD*99#^M)
+expect (CONNECT)
+^M
+^M
+CONNECT
+ -- got it
+
+send (^M)
+expect (^M)
+alarm
+Failed
+expect (^M)
+alarm
+Failed
+expect (^M)
+alarm
+Failed
+expect (^M)
+expect (^M)
+expect (^M)
+alarm
+Failed
+expect (^M)
+warning: read() on stdin returned 0
+Failed
+SIGHUP
+expect (^M)
+alarm
+Failed
+expect (^M)
+SIGTERM
+expect (^M)
+SIGTERM
+expect (^M)
+SIGTERM
+expect (^M)
+alarm
+Failed
+expect (^M)
+expect (^M)
+alarm
+Failed
+expect (^M)
+alarm
+Failed
+expect (^M)
+alarm
+Failed
+expect (^M)
+warning: read() on stdin returned 0
+Failed
+SIGHUP
+expect (^M)
+alarm
+Failed
+expect (^M)
+alarm
+Failed
+expect (^M)
+alarm
+Failed
+expect (^M)
+alarm
+Failed

@@ -1,0 +1,12 @@
+#!/system/bin/sh
+export PATH="/system/busybox/bin:/system/busybox/sbin:/system/busybox/usr/bin:/system/busybox/usr/sbin:/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin"
+
+
+if [ -f "/data/misc/usb3g/dialnum" ];then
+echo "the dialnum already exits"
+else
+mkdir -p /data/misc/usb3g
+chmod 777 /data/misc/usb3g
+cp /system/etc/dialnum /data/misc/usb3g/
+chmod 777 /data/misc/usb3g/dialnum
+fi 

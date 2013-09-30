@@ -1,0 +1,15 @@
+#!/system/bin/sh
+
+if [ -f "/system/etc/ethernetconf" ] ; then
+echo "~~~~~~~~ use static IP ~~~~~~~~"
+source /system/etc/ethernetconf
+/system/bin/ifconfig eth0 $IP netmask $MASK
+/system/busybox/sbin/route add default gw $GW
+/system/bin/setprop net.eth0.dns1 $DNS
+/system/bin/setprop net.dns1 $DNS
+else
+echo "~~~~~~~~~ use DHCP ~~~~~~~~~~"
+/system/bin/netcfg eth0 up
+/system/busybox/bin/sleep 2
+/system/bin/netcfg eth0 dhcp
+fi

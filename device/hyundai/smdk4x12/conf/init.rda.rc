@@ -1,0 +1,52 @@
+import init.bt.rc
+
+on post-fs
+
+on post-fs-data
+
+# Load common part modules
+    insmod /system/lib/modules/hci_uart.ko
+
+on boot
+
+service hciattach /system/bin/hciattach -n -s 115200 /dev/ttySAC0 rda 2000000 flow
+#service hciattach /system/bin/hciattach -n -s 115200 /dev/ttySAC0 rda 
+    class main
+    disabled
+    oneshot
+
+
+##RTL8818 start 
+#service wpa_supplicant /system/bin/wpa_supplicant -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf 
+#    socket wpa_wlan0 dgram 660 wifi wifi 
+#    group wifi inet 
+#    disabled 
+#    oneshot 
+
+#service hostapd /system/bin/hostapd_wps /data/misc/wifi/hostapd.conf
+#    group wifi inet
+#    disabled
+#    oneshot
+
+#service dhcpcd_wlan0 /system/bin/dhcpcd -ABKL
+#    group system dhcp
+#    disabled
+#    oneshot
+
+#service dhcpcd_p2p /system/bin/dhcpcd -aABKL
+#    class main
+#    disabled
+#    oneshot
+
+#service iprenew_wlan0 /system/bin/dhcpcd -n
+#    class main
+#    disabled
+#    oneshot
+
+#service iprenew_p2p /system/bin/dhcpcd -n    
+#    class main    
+#    disabled    
+#    oneshot
+
+##RTL8818 end
+    

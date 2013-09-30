@@ -1,0 +1,31 @@
+#!/system/busybox/bin/sh
+DEVICE=$1
+NUMBER=$2
+USER=$3
+PASSWD=$4
+APN=$5
+	echo "i am usb modem dialer"
+	echo $1
+	echo "\"$USER\" * \"$PASSWD\"">/system/etc/ppp/pap-secrets
+	echo "\"$USER\" * \"$PASSWD\"">/system/etc/ppp/chap-secrets
+	
+	mkdir /tmp
+
+	case "$DEVICE" in
+serial_0|serial_1|serial_2|serial_3|serial_4|serial_5)
+	echo $DEVICE
+	/system/busybox/bin/cat /system/etc/ppp/chat_$DEVICE.conf >  /system/etc/ppp/chat.conf
+	/system/busybox/bin/sed s/TELENUMBER/$NUMBER/ /system/etc/ppp/chat_$DEVICE.conf > /system/etc/ppp/chat_tmp
+	/system/busybox/bin/sed s/APN/$APN/ /system/etc/ppp/chat_tmp > /system/etc/ppp/chat.conf
+	
+	/system/busybox/bin/sed s/USER/$USER/ /system/etc/ppp/$DEVICE.dia >/system/etc/ppp/dialer_tmp
+	/system/busybox/bin/sed s/PASSWD/$PASSWD/ /system/etc/ppp/dialer_tmp >/system/etc/ppp/dialer
+	chmod 777 /system/etc/ppp/dialer
+	/system/etc/ppp/dialer
+    ;;
+
+RELEASE)
+
+    ;;
+esac
+

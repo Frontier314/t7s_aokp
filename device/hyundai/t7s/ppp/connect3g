@@ -1,0 +1,33 @@
+#!/system/bin/sh
+export PATH="/system/busybox/bin:/system/busybox/sbin:/system/busybox/usr/bin:/system/busybox/usr/sbin:/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin"
+
+
+ps |  awk '$5~/chat/{print $1}' | xargs kill -9
+ps |  awk '$5~/pppd/{print $1}' | xargs kill -9
+
+net=`getprop net.pppd.numeric`
+echo "net=$net"
+num=`awk -F= '$1~/'$net'/{print $2}' /data/misc/usb3g/dialnum `
+if [ -z $num ];then
+num="*99#"
+else
+echo "num=  $num"  
+fi
+echo "num=$num"
+
+echo "TIMEOUT 30" > /data/misc/usb3g/chat-connect
+echo "\"\" ATDT"$num >> /data/misc/usb3g/chat-connect
+echo "CONNECT" >> /data/misc/usb3g/chat-connect
+
+echo "\"\" \"\\K\"" > /data/misc/usb3g/chat-disconnect
+echo "\"\" \"+++ATH\"" >> /data/misc/usb3g/chat-disconnect
+
+rm /data/misc/usb3g/usbdongle-pppd.log
+
+pppd unit 8 `getprop net.pppd.device` 115200    \
+defaultroute nodetach crtscts debug usepeerdns noipdefault defaultroute noauth \
+user `getprop net.pppd.user` \
+password `getprop net.pppd.passwd`       \
+connect '/system/bin/chat -e -E -v -V -f /data/misc/usb3g/chat-connect' \
+disconnect '/system/bin/chat -f /data/misc/usb3g/chat-disconnect'       \
+logfile /data/misc/usb3g/usbdongle-pppd.log                             \

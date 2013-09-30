@@ -1,0 +1,37 @@
+# Configuration for the usb-modeswitch package, a mode switching tool for
+# USB devices providing multiple states or modes
+#
+# This file is evaluated by the wrapper script "usb_modeswitch" in /lib/udev
+# To enable an option, set it to "1", "yes" or "true" (case doesn't matter)
+# Everything else counts as "disable"
+# Disable automatic mode switching globally (e.g. to access the original
+# install storage)
+   
+DisableSwitching=0
+     
+# Enable logging (results in a extensive report file in /var/log, named
+# "usb_modeswitch_<interface-name>"
+      
+EnableLogging=0
+       
+########################################################
+       
+# ZTE MF622 (aka "Onda MDC502HS")
+# ZTE MF626
+# ZTE MF628+ (tested version from Telia / Sweden)
+# ZTE MF633
+# ZTE MF636 (aka "Telstra / BigPond 7.2 Mobile Card")
+# ZTE MF637
+#
+# Contributor: Joakim Wennergren and others
+        
+DefaultVendor=  0x19d2
+DefaultProduct= 0x2000
+         
+TargetVendor=   0x19d2
+TargetProduct=  0x0031
+          
+MessageContent="5553424312345678000000000000061b000000020000000000000000000000"
+MessageContent2="5553424312345678000000000000061b000000030000000000000000000000"
+           
+NeedResponse=1

@@ -1,0 +1,9 @@
+# Huawei ET128
+# Contributor: Dale Lane
+DefaultVendor= 0x12d1
+DefaultProduct= 0x1da1
+TargetVendor= 0x12d1
+TargetProduct= 0x1d09
+# choose one of these:
+DetachStorageOnly=0
+HuaweiMode=1
