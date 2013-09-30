@@ -11,8 +11,6 @@ Copy the /device folder into /device on the AOKP tree and use the supplied (fixe
 
 Provided that AOKP prerequisites are installed on your system, cd to the root folder of AOKP source tree and invoke:
 
-. build/envsetup.sh
-lunch (select the aokp_t7s build you want)
-mka
+. build/envsetup.sh && lunch (select the aokp_t7s build you want) && mka
 
 Use the original ramdisk from 20130318 ICS ROM.
